@@ -87,13 +87,29 @@ class QuestionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
-      child: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Text(
-          question ?? "",
-          style: Theme.of(context).textTheme.displaySmall,
+    return AnimatedSwitcher(
+      transitionBuilder: (Widget child, Animation<double> animation) {
+        final curveAnimation =
+            CurveTween(curve: Curves.easeInCubic).animate(animation);
+        final offsetAnimation =
+            Tween<Offset>(begin: Offset(-0.1, 0.0), end: Offset.zero)
+                .animate(curveAnimation);
+        final fadeInAnimation = curveAnimation;
+        return FadeTransition(
+          opacity: fadeInAnimation,
+          child: SlideTransition(position: offsetAnimation, child: child),
+        );
+      },
+      duration: Duration(milliseconds: 3000),
+      child: Card(
+        key: ValueKey(question),
+        elevation: 4,
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Text(
+            question ?? "",
+            style: Theme.of(context).textTheme.displaySmall,
+          ),
         ),
       ),
     );
